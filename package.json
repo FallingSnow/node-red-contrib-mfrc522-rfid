@@ -3,13 +3,18 @@
   "main": "rc522.js",
   "node-red": {
     "nodes": {
-      "rc522-extra": "rc522.js"
+      "rc522": "rc522.js"
     }
   },
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Simple Node-RED node for the Raspberry Pi to read NFC tags via a RC522 NFC reader. It can return the UID and optionaly a data block. Chip Select (SDA) pin is also configurable (defaults to CE0, 24).",
   "homepage": "https://github.com/frederic-bonjour/node-red-contrib-mfrc522-rfid",
   "author": "Frédéric Bonjour",
+  "contributors": [
+    {
+      "name": "Ayrton Sparling"
+    }
+  ],
   "license": "ISC",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
