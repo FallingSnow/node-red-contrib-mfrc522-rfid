@@ -110,7 +110,8 @@ class RC522 {
 
     // Features are not read, it contains the 2 auth keys and access bits. On some cards this block always returns random data.
     // It's like reading a password, you can't.
-    let [...blocks, features] = [this.mfrc522.getDataForBlock(offset), this.mfrc522.getDataForBlock(offset + 1), this.mfrc522.getDataForBlock(offset + 2), this.mfrc522.getDataForBlock(offset + 3)];
+    let blocks = [this.mfrc522.getDataForBlock(offset), this.mfrc522.getDataForBlock(offset + 1), this.mfrc522.getDataForBlock(offset + 2)];
+    // let features = this.mfrc522.getDataForBlock(offset + 3);
 
     this.stopCrypto();
 
