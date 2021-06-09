@@ -23,7 +23,7 @@ class RC522 {
 
   findCard() {
     mfrc522.reset();
-    const { ...card, status } = this.mfrc522.findCard();
+    const { status, ...card } = this.mfrc522.findCard();
     if (!status) {
       throw new Error("Could not find card");
     }
@@ -66,11 +66,11 @@ class RC522 {
     }
 
     this.mfrc522.writeDataToBlock(offset, data.slice(0, 15));
-    this.mfrc522.writeDataToBlock(offset+1, data.slice(16, 31));
-    this.mfrc522.writeDataToBlock(offset+2, data.slice(32, 47));
+    this.mfrc522.writeDataToBlock(offset + 1, data.slice(16, 31));
+    this.mfrc522.writeDataToBlock(offset + 2, data.slice(32, 47));
 
     if (keyA || keyB) {
-      let features = this.mfrc522.getDataForBlock(offset+3);
+      let features = this.mfrc522.getDataForBlock(offset + 3);
 
       if (keyA) {
         assert.strictEqual(keyA.length, 6);
@@ -82,7 +82,7 @@ class RC522 {
       }
 
       // Write authentication block
-      this.mfrc522.writeDataToBlock(offset+3, features);
+      this.mfrc522.writeDataToBlock(offset + 3, features);
     }
 
     this.stopCrypto();
