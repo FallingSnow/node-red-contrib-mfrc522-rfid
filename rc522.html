@@ -1,24 +1,46 @@
 <script type="text/javascript">
-    RED.nodes.registerType('rc522-extra',{
+    const defacults = {
+        name: {
+            value: ""
+        },
+        blockedFor: {
+            value: 500,
+            required: true,
+            validate: RED.validators.number()
+        },
+        CSpin: {
+            value: 24,
+            required: true,
+            validate: RED.validators.number()
+        },
+        sector: {
+            value: 2,
+            required: true,
+            validate: RED.validators.number()
+        },
+        authenticationKey: {
+            value: [0xff, 0xff, 0xff, 0xff, 0xff, 0xff],
+            required: true,
+            validate: RED.validators.json()
+        }
+    };
+
+    const typeProperties = {
         category: 'network',
         color: '#E9967A',
-        defaults: {
-            name: {value:""},
-            blockedFor: {value: 5, required: true, validate:RED.validators.number()},
-            CSpin: {value: 24, required: true, validate:RED.validators.number()},
-            dataBlockAddr: {value: 8},
-            dataBlockLength: {value: 4}
-        },
-        inputs: 0,
-        outputs: 1,
         icon: "bridge.png",
-        label: function() {
-            return this.name || "rc522-extra";
-        }
+    };
+
+    RED.nodes.registerType('rc522', {
+        ...typeProperties,
+        defaults,
+        inputs: 1,
+        outputs: 1,
+        label: () => this.name || "rc522"
     });
 </script>
 
-<script type="text/x-red" data-template-name="rc522-extra">
+<script type="text/x-red" data-template-name="rc522">
     <div class="form-row">
         <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
         <input type="text" id="node-input-name" placeholder="Name">
@@ -30,23 +52,25 @@
     </div>
 
     <div class="form-row">
-        <label for="node-input-dataBlockAddr">Data block</label>
-        <input type="text" id="node-input-dataBlockAddr" placeholder="Data block address">
+        <label for="node-input-authenticationKey">Authentication Key</label>
+        <input type="password" id="node-input-authenticationKey" placeholder="Key to unlock sector">
     </div>
+
     <div class="form-row">
-        <label for="node-input-dataBlockLength">Data length</label>
-        <input type="text" id="node-input-dataBlockLength" placeholder="Data block length">
+        <label for="node-input-sector">Sector</label>
+        <input type="text" id="node-input-dataBlockAddr" placeholder="Reads this 64 byte sector">
     </div>
+    <div class="form-tips"><b>Sector 0 is manufacturer data. Sector 1 is card holder data. Start at sector 2.</div>
 
     <div class="form-row">
         <label for="node-input-blockedFor">Blocked for</label>
         <input type="text" id="node-input-blockedFor" placeholder="Blocked for">
     </div>
-    <div class="form-tips"><b>Enter a number of seconds the node shall not read another node for.</div>
+    <div class="form-tips"><b>Enter a number of milliseconds the node shall not read the same uid for.</div>
 </script>
 
-<script type="text/x-red" data-help-name="rc522-extra">
-<p>Reads the UID of NFC tags from a RC522 card reader..</p>
+<script type="text/x-red" data-help-name="rc522-read">
+    <p>Reads the UID of NFC tags from a RC522 card reader..</p>
 
  <h3>Output</h3>
      <ol class="node-ports">
