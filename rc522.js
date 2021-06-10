@@ -162,7 +162,6 @@ module.exports = function (RED) {
         // Read
 
         const data = readSector(lastUidArray, {
-          key: msg.payload.authenticationKey,
           sector: config.sector
         });
 
@@ -172,12 +171,12 @@ module.exports = function (RED) {
           text: data || uid
         });
 
-        Object.assign(msg.payload, {
+        msg.payload = {
           uid,
           data,
           timestamp,
           bitSize
-        });
+        };
       }
 
       send(msg);
