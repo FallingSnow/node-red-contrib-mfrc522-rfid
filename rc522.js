@@ -176,7 +176,7 @@ module.exports = function (RED) {
           uid,
           data,
           timestamp,
-          bitSize
+          bitSize: card.bitSize
         };
       }
 
