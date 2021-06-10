@@ -143,6 +143,8 @@ module.exports = function (RED) {
         // or we don't want to read the same card again so soon
         return;
       }
+      
+      node.status({});
 
       const uid = lastUidArray.map(d => d.toString(16)).join(":");
       node.log("New Card detected, CardType: " + card.bitSize);
