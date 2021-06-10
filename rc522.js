@@ -16,7 +16,7 @@ module.exports = function (RED) {
       client: config.CSpin || 24 // pin number of CS
     });
     const mfrc522 = new Mfrc522(spi).setResetPin(22);
-    let blockedUntil, lastUidArray;
+    let blockedUntil = 0, lastUidArray = [];
 
     function findCard() {
       mfrc522.reset();
@@ -123,7 +123,7 @@ module.exports = function (RED) {
     }
 
     node.on('input', function onInput(msg, send) {
-      const timestamp = Date.now();
+      const hrtime = process.hrtime.bigint();
       node.status({});
 
       let card;
@@ -131,13 +131,13 @@ module.exports = function (RED) {
         card = findCard();
 
         let uidArray = getUid();
-        if (uidArray.equals(lastUidArray) && timestamp <= blockedUntil) {
+        if (uidArray.equals(lastUidArray) && hrtime <= blockedUntil) {
           throw new Error("Blocked");
         }
 
         // Yay! We got a card we want to work with!
         lastUidArray = uidArray;
-        blockedUntil = timestamp + (config.blockedFor || 500);
+        blockedUntil = hrtime + (config.blockedFor || 500) * 1000000;
       } catch (e) {
         // No error because if these fail then we just couldn't read the card successfully
         // or we don't want to read the same card again so soon
@@ -176,7 +176,6 @@ module.exports = function (RED) {
         msg.payload = {
           uid,
           data,
-          timestamp,
           bitSize: card.bitSize
         };
       }
