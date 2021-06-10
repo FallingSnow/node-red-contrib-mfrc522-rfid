@@ -1,11 +1,13 @@
-const Mfrc522 = require("../mfrc522-rpi/index");
-const SoftSPI = require("../rpi-softspi/index");
+const Mfrc522 = require("mfrc522-rpi");
+const SoftSPI = require("rpi-softspi");
 const Buffer = require("buffer");
 const assert = require("assert");
+const EventEmitter = require('events').EventEmitter;
 
-class RC522 {
-  constructor(RED, config) {
-    Object.assign(this, { RED, config });
+class RC522 extends EventEmitter {
+  constructor(config) {
+    super();
+    Object.assign(this, { config });
 
     const spi = new SoftSPI({
       clock: 23, // pin number of SCLK
@@ -127,7 +129,7 @@ class RC522 {
 
   async onInput(msg, send) {
     const timestamp = Date.now();
-    const targetTime = this.lastTime + this.config.blockedFor;
+    const targetTime = this.lastTime + this.config.blockedFor || 3000;
 
     let card;
     try {
@@ -157,7 +159,7 @@ class RC522 {
       // Write
 
       this.writeSector(this.lastUidArray, Buffer.from(msg.payload.data), {
-        key: this.config.authenticationKey || msg.payload.authenticationKey,
+        key: msg.payload.authenticationKey,
         sector: this.config.sector,
         keyA: msg.payload.keyA,
         keyB: msg.payload.keyB,
@@ -166,7 +168,7 @@ class RC522 {
       // Read
 
       const data = this.readSector(this.lastUidArray, {
-        key: this.config.authenticationKey || msg.payload.authenticationKey,
+        key: msg.payload.authenticationKey,
         sector: this.config.sector
       });
 
@@ -190,5 +192,8 @@ class RC522 {
 }
 
 module.exports = function (RED) {
-  RED.nodes.registerType("rc522", RC522.constructor);
+  RED.nodes.registerType("rc522", function(config) {
+    let node = new RC522(config);
+    RED.nodes.createNode(node, config);
+  });
 }

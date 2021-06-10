@@ -1,5 +1,5 @@
 <script type="text/javascript">
-    const defacults = {
+    const defaults = {
         name: {
             value: ""
         },
@@ -17,11 +17,6 @@
             value: 2,
             required: true,
             validate: RED.validators.number()
-        },
-        authenticationKey: {
-            value: [0xff, 0xff, 0xff, 0xff, 0xff, 0xff],
-            required: true,
-            validate: RED.validators.json()
         }
     };
 
@@ -52,13 +47,8 @@
     </div>
 
     <div class="form-row">
-        <label for="node-input-authenticationKey">Authentication Key</label>
-        <input type="password" id="node-input-authenticationKey" placeholder="Key to unlock sector">
-    </div>
-
-    <div class="form-row">
         <label for="node-input-sector">Sector</label>
-        <input type="text" id="node-input-dataBlockAddr" placeholder="Reads this 64 byte sector">
+        <input type="text" id="node-input-dataBlockAddr" placeholder="Reads the nth sector">
     </div>
     <div class="form-tips"><b>Sector 0 is manufacturer data. Sector 1 is card holder data. Start at sector 2.</div>
 
@@ -66,10 +56,10 @@
         <label for="node-input-blockedFor">Blocked for</label>
         <input type="text" id="node-input-blockedFor" placeholder="Blocked for">
     </div>
-    <div class="form-tips"><b>Enter a number of milliseconds the node shall not read the same uid for.</div>
+    <div class="form-tips"><b>Enter a number of milliseconds the node shall not read the same nfc chip for.</div>
 </script>
 
-<script type="text/x-red" data-help-name="rc522-read">
+<script type="text/x-red" data-help-name="rc522">
     <p>Reads the UID of NFC tags from a RC522 card reader..</p>
 
  <h3>Output</h3>

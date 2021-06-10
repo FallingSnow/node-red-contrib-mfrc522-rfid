@@ -7,7 +7,7 @@
     }
   },
   "version": "2.0.0",
-  "description": "Simple Node-RED node for the Raspberry Pi to read NFC tags via a RC522 NFC reader. It can return the UID and optionaly a data block. Chip Select (SDA) pin is also configurable (defaults to CE0, 24).",
+  "description": "Simple Node-RED node for the Raspberry Pi to read/write NFC tags via a RC522 NFC reader. It can return the UID and optionaly a data block. Chip Select (SDA) pin is also configurable (defaults to CE0, 24).",
   "homepage": "https://github.com/frederic-bonjour/node-red-contrib-mfrc522-rfid",
   "author": "Frédéric Bonjour",
   "contributors": [
