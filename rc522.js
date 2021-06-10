@@ -16,7 +16,7 @@ module.exports = function (RED) {
       client: config.CSpin || 24 // pin number of CS
     });
     const mfrc522 = new Mfrc522(spi).setResetPin(22);
-    let blockedUntil = 0, lastUidArray = [];
+    let blockedUntil = BigInt(0), lastUidArray = [];
 
     function findCard() {
       mfrc522.reset();
@@ -137,7 +137,7 @@ module.exports = function (RED) {
 
         // Yay! We got a card we want to work with!
         lastUidArray = uidArray;
-        blockedUntil = hrtime + (config.blockedFor || 500) * 1000000;
+        blockedUntil = hrtime + (BigInt(config.blockedFor) || 500n) * 1000000n;
       } catch (e) {
         // No error because if these fail then we just couldn't read the card successfully
         // or we don't want to read the same card again so soon
