@@ -149,7 +149,7 @@ module.exports = function (RED) {
 
 
       // Do we want to write or read?
-      if (msg.payload.data) {
+      if (msg.payload?.data) {
         // Write
 
         writeSector(lastUidArray, Buffer.from(msg.payload.data), {
