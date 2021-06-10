@@ -7,6 +7,7 @@ module.exports = function (RED) {
 
   function rc522(config) {
     RED.nodes.createNode(this, config);
+    const node = this;
 
     const spi = new SoftSPI({
       clock: 23, // pin number of SCLK
@@ -46,12 +47,12 @@ module.exports = function (RED) {
       mfrc522.selectCard(uidArray);
 
       if (!mfrc522.authenticate(offset, key, uidArray)) {
-        this.status({
+        node.status({
           fill: "red",
           shape: "dot",
           text: "Authentication error."
         });
-        this.log("Authentication Error");
+        node.log("Authentication Error");
         return;
       }
 
@@ -95,12 +96,12 @@ module.exports = function (RED) {
       mfrc522.selectCard(uidArray);
 
       if (!mfrc522.authenticate(offset, key, uidArray)) {
-        this.status({
+        node.status({
           fill: "red",
           shape: "dot",
           text: "Authentication error."
         });
-        this.log("Authentication Error");
+        node.log("Authentication Error");
         return;
       }
 
@@ -121,7 +122,7 @@ module.exports = function (RED) {
       return data;
     }
 
-    this.on('input', function onInput(msg, send) {
+    node.on('input', function onInput(msg, send) {
       const timestamp = Date.now();
       const targetTime = lastTime + config.blockedFor || 3000;
 
@@ -144,8 +145,8 @@ module.exports = function (RED) {
       }
 
       const uid = lastUidArray.map(d => d.toString(16)).join(":");
-      this.log("New Card detected, CardType: " + card.bitSize);
-      this.log("UID: " + uid);
+      node.log("New Card detected, CardType: " + card.bitSize);
+      node.log("UID: " + uid);
 
 
       // Do we want to write or read?
@@ -165,7 +166,7 @@ module.exports = function (RED) {
           sector: config.sector
         });
 
-        this.status({
+        node.status({
           fill: "green",
           shape: "dot",
           text: data || uid
