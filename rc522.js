@@ -16,7 +16,7 @@ module.exports = function (RED) {
       client: config.CSpin || 24 // pin number of CS
     });
     const mfrc522 = new Mfrc522(spi).setResetPin(22);
-    let lastTime, lastUidArray;
+    let blockedUntil, lastUidArray;
 
     function findCard() {
       mfrc522.reset();
@@ -124,27 +124,25 @@ module.exports = function (RED) {
 
     node.on('input', function onInput(msg, send) {
       const timestamp = Date.now();
-      const targetTime = lastTime + config.blockedFor || 3000;
+      node.status({});
 
       let card;
       try {
         card = findCard();
 
         let uidArray = getUid();
-        if (uidArray === lastUidArray && timestamp <= targetTime) {
+        if (uidArray === lastUidArray && timestamp <= blockedUntil) {
           throw new Error("Blocked");
         }
 
         // Yay! We got a card we want to work with!
         lastUidArray = uidArray;
-        lastTime = timestamp;
+        blockedUntil = timestamp + (config.blockedFor || 500);
       } catch (e) {
         // No error because if these fail then we just couldn't read the card successfully
         // or we don't want to read the same card again so soon
         return;
       }
-      
-      node.status({});
 
       const uid = lastUidArray.map(d => d.toString(16)).join(":");
       node.log("New Card detected, CardType: " + card.bitSize);
@@ -156,7 +154,7 @@ module.exports = function (RED) {
         // Write
 
         writeSector(lastUidArray, Buffer.from(msg.payload.data), {
-          key: msg.payload.authenticationKey,
+          key: config.key ? Buffer.from(config.key, "hex").toArray() : undefined,
           sector: config.sector,
           keyA: msg.payload.keyA,
           keyB: msg.payload.keyB,
@@ -165,13 +163,14 @@ module.exports = function (RED) {
         // Read
 
         const data = readSector(lastUidArray, {
+          key: config.key ? Buffer.from(config.key, "hex").toArray() : undefined,
           sector: config.sector
         });
 
         node.status({
           fill: "green",
           shape: "dot",
-          text: data || uid
+          text: uid
         });
 
         msg.payload = {

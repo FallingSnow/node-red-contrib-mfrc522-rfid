@@ -17,6 +17,9 @@
             value: 2,
             required: true,
             validate: RED.validators.number()
+        },
+        key: {
+            value: ""
         }
     };
 
@@ -44,6 +47,11 @@
     <div class="form-row">
         <label for="node-input-CSpin">CS pin</label>
         <input type="text" id="node-input-CSpin" placeholder="Chip Select pin">
+    </div>
+
+    <div class="form-row">
+        <label for="node-input-key">Authentication Key <small>(hexadecimal)</small></label>
+        <input type="password" onfocus="this.type='text'" onblur="this.type='password'" id="node-input-key" minlength="12" maxlength="12" placeholder="FFFFFFFFFFFF">
     </div>
 
     <div class="form-row">
